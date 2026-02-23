@@ -10,21 +10,19 @@ class NotePage extends StatefulWidget {
 
 class _NotePageState extends State<NotePage> {
   // untuk controller input
-  late TextEditingController dateController;
-  late TextEditingController costController;
-  late TextEditingController detailController;
+  final TextEditingController dateController = TextEditingController();
+  DateTime? selectedDate;
+  final TextEditingController costController = TextEditingController();
+  final TextEditingController detailController = TextEditingController();
 
   // list allNotes yang sudah diinput
   List<Map<String, dynamic>> allNotes = [];
-
+  
   String selectedTypeNote = "";
 
   @override
   void initState() {
     super.initState();
-    dateController = TextEditingController();
-    costController = TextEditingController();
-    detailController = TextEditingController();
     loadAllNote();
   }
 
@@ -34,19 +32,36 @@ class _NotePageState extends State<NotePage> {
     setState(() {});
   }
 
+  // function untuk menampilkan datepicker
+  Future<void> datePick(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+        selectedDate = pickedDate;
+        dateController.text = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year.toString().padLeft(4, '0')}";
+    }
+  }
+
   // function untuk menambah suatu data
   Future<void> addMoreNote() async {
-    if (dateController.text.isEmpty ||
+    if (selectedDate == null ||
         costController.text.isEmpty ||
-        detailController.text.isEmpty)
+        detailController.text.isEmpty ||
+        selectedTypeNote.isEmpty)
       return;
 
     // ubah format string jadi double
-    double cost = double.parse(costController.text);
+    final double? cost = double.tryParse(costController.text);
+    if (cost == null) return;
 
     // bentuk note dalam map
     Map<String, dynamic> note = {
-      "date": dateController.text,
+      "date": selectedDate!.toIso8601String(),
       "cost": cost,
       "detail": detailController.text,
       "opsi": selectedTypeNote,
@@ -54,8 +69,10 @@ class _NotePageState extends State<NotePage> {
 
     await noteLogic.addnote(note);
 
-    selectedTypeNote = "";
-
+    setState(() {
+      selectedTypeNote = "";  
+    });
+    
     dateController.clear();
     costController.clear();
     detailController.clear();
@@ -64,21 +81,22 @@ class _NotePageState extends State<NotePage> {
   // function warna container berdasarkan tipe input
   getColorContainer(String? type) {
     if (type == "income") {
-      return Colors.white;
+      return Colors.green;
     } else if (type == "spending") {
       return Colors.red;
     } else {
-      return Colors.green;
+      return Colors.grey;
     }
   }
 
+  // function warna text berdasarkan tipe input
   getColorTextNote(String? type) {
     if (type == "income") {
-      return Colors.red;
+      return Colors.white;
     } else if (type == "spending") {
       return Colors.white;
     } else {
-      return Colors.green;
+      return Colors.grey;
     }
   }
 
@@ -93,6 +111,8 @@ class _NotePageState extends State<NotePage> {
           children: [
             TextField(
               controller: dateController,
+              readOnly: true,
+              onTap: () => datePick(context),
               decoration: InputDecoration(labelText: "date", suffixIcon: Icon(Icons.calendar_today)),
             ),
             TextField(
@@ -176,6 +196,7 @@ class _NotePageState extends State<NotePage> {
         itemBuilder: (context, index) {
           final displayNote = allNotes[index];
           final String? type = displayNote['opsi'];
+          final DateTime date = DateTime.parse(displayNote['date']);
           return Column(
             children: [
               Container(
@@ -189,8 +210,8 @@ class _NotePageState extends State<NotePage> {
                 child: Column(
                   children: [
                     Text(
-                      displayNote['date'],
-                      style: TextStyle(color: getColorTextNote(type)),
+                    "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",  
+                    style: TextStyle(color: getColorTextNote(type)),
                     ),
                     Text(
                       displayNote['cost'].toString(),
