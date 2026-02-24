@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrack/notifier/notenotifier.dart';
 import '/logic/noteLogic.dart';
 
 class NotePage extends StatefulWidget {
@@ -15,21 +16,12 @@ class _NotePageState extends State<NotePage> {
   final TextEditingController costController = TextEditingController();
   final TextEditingController detailController = TextEditingController();
 
-  // list allNotes yang sudah diinput
-  List<Map<String, dynamic>> allNotes = [];
-  
   String selectedTypeNote = "";
 
   @override
   void initState() {
     super.initState();
-    loadAllNote();
-  }
-
-  // function untuk menampilkan data yang ada
-  Future<void> loadAllNote() async {
-    allNotes = await noteLogic.loadNote();
-    setState(() {});
+    noteLogic.loadNote();
   }
 
   // function untuk menampilkan datepicker
@@ -42,8 +34,9 @@ class _NotePageState extends State<NotePage> {
     );
 
     if (pickedDate != null) {
-        selectedDate = pickedDate;
-        dateController.text = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year.toString().padLeft(4, '0')}";
+      selectedDate = pickedDate;
+      dateController.text =
+          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year.toString().padLeft(4, '0')}";
     }
   }
 
@@ -70,9 +63,9 @@ class _NotePageState extends State<NotePage> {
     await noteLogic.addnote(note);
 
     setState(() {
-      selectedTypeNote = "";  
+      selectedTypeNote = "";
     });
-    
+
     dateController.clear();
     costController.clear();
     detailController.clear();
@@ -113,7 +106,10 @@ class _NotePageState extends State<NotePage> {
               controller: dateController,
               readOnly: true,
               onTap: () => datePick(context),
-              decoration: InputDecoration(labelText: "date", suffixIcon: Icon(Icons.calendar_today)),
+              decoration: InputDecoration(
+                labelText: "date",
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
             ),
             TextField(
               controller: costController,
@@ -171,7 +167,6 @@ class _NotePageState extends State<NotePage> {
             onPressed: () async {
               await addMoreNote();
               Navigator.pop(context);
-              await loadAllNote();
             },
             child: Text("Simpan"),
           ),
@@ -191,44 +186,58 @@ class _NotePageState extends State<NotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: allNotes.length,
-        itemBuilder: (context, index) {
-          final displayNote = allNotes[index];
-          final String? type = displayNote['opsi'];
-          final DateTime date = DateTime.parse(displayNote['date']);
-          return Column(
-            children: [
-              Container(
-                width: 350,
-                height: 125,
-                padding: EdgeInsetsGeometry.only(top: 25.0),
-                decoration: BoxDecoration(
-                  color: getColorContainer(type),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                    "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",  
-                    style: TextStyle(color: getColorTextNote(type)),
-                    ),
-                    Text(
-                      displayNote['cost'].toString(),
-                      style: TextStyle(color: getColorTextNote(type)),
-                    ),
-                    Text(
-                      displayNote['detail'],
-                      style: TextStyle(color: getColorTextNote(type)),
-                    ),
+      body: ValueListenableBuilder(
+        valueListenable: Notenotifier.noteNotifier,
+        builder:
+            (
+              context,
+              allNotes,
+              _,
+            ) {
+              if (allNotes.isEmpty) {
+                return Center(child: Text("Belum ada notes"));
+              }
+              return ListView.builder(
+                itemCount: allNotes.length,
+                itemBuilder: (context, index) {
+                  final displayNote = allNotes[index];
+                  final String? type = displayNote['opsi'];
+                  final DateTime date = DateTime.parse(displayNote['date']);
+                  return Column(
+                    children: [
+                      Container(
+                        width: 350,
+                        height: 125,
+                        padding: EdgeInsetsGeometry.only(top: 25.0),
+                        decoration: BoxDecoration(
+                          color: getColorContainer(type),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
+                              style: TextStyle(color: getColorTextNote(type)),
+                            ),
+                            Text(
+                              displayNote['cost'].toString(),
+                              style: TextStyle(color: getColorTextNote(type)),
+                            ),
+                            Text(
+                              displayNote['detail'],
+                              style: TextStyle(color: getColorTextNote(type)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
                   ],
-                ),
-              ),
-              SizedBox(height: 10.0),
-            ],
-          );
-        },
-      ),
+                );
+              },
+            );
+          },
+        ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: showPopupNote,
         child: Icon(Icons.add),

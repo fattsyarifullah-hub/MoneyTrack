@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/logic/baseNotifier.dart';
+import '../notifier/notenotifier.dart';
 
 class TablePage extends StatelessWidget {
   const TablePage({super.key});
@@ -8,38 +8,36 @@ class TablePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder<List<Map<String, dynamic>>>(
-        valueListenable: baseNotifier,
-        builder:
-            (BuildContext context, List<Map<String, dynamic>> allNotifier, _) {
-              if (allNotifier.isEmpty) {
-                return Center(child: Text("Belum ada data"));
-              }
-
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("Date")),
-                      DataColumn(label: Text("Type")),
-                      DataColumn(label: Text("Inflow")),
-                      DataColumn(label: Text("Outflow")),
-                    ],
-                    rows: allNotifier.map((listTable) {
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(listTable['date'])),
-                          DataCell(Text(listTable['cost'])),
-                          DataCell(Text(listTable['detail'])),
-                          DataCell(Text(listTable['type']))
-                        ] 
-                      );
-                    }).toList(),
-                  ),
-                ),
-              );
-            },
+        valueListenable: Notenotifier.noteNotifier,
+        builder: (BuildContext context, noteNotifier, Widget? child) {
+          if (noteNotifier.isEmpty) {
+            return Center(child: Text("Belum ada notes"));
+          }
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text("date", style: TextStyle(color: Colors.white),),),
+                  DataColumn(label: Text("cost", style: TextStyle(color: Colors.white),),),
+                  DataColumn(label: Text("detail", style: TextStyle(color: Colors.white),),),
+                  DataColumn(label: Text("tipe", style: TextStyle(color: Colors.white),),),
+                ], 
+                rows: noteNotifier.map((note) {
+                  final date = DateTime.parse(note["date"]);
+                  return DataRow(cells: [
+                    DataCell(Text("${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}", style: TextStyle(color: Colors.white),)),
+                    DataCell(Text(note["cost"].toString(), style: TextStyle(color: Colors.white),)),
+                    DataCell(Text(note["detail"], style: TextStyle(color: Colors.white),)),
+                    DataCell(Text(note["opsi"], style: TextStyle(color: Colors.white),)),
+                  ]);
+                }
+                ).toList(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
