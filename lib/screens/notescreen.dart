@@ -60,6 +60,7 @@ class _NotePageState extends State<NotePage> {
       "opsi": selectedTypeNote,
     };
 
+    // tambah note ke sharedpreferences dan update noteNotifier
     await noteLogic.addnote(note);
 
     setState(() {
@@ -159,10 +160,14 @@ class _NotePageState extends State<NotePage> {
           ],
         ),
         actions: [
+
+          // button batal menambah note
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text("Batal"),
           ),
+
+          // button untuk simpan note
           ElevatedButton(
             onPressed: () async {
               await addMoreNote();
@@ -187,7 +192,11 @@ class _NotePageState extends State<NotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder(
+
+        // mendengarkan perubahan data note yang disimpan di notenotifier
         valueListenable: Notenotifier.noteNotifier,
+
+        // membangun tampilan berdasarkan data note yang ada
         builder:
             (
               context,
@@ -197,6 +206,8 @@ class _NotePageState extends State<NotePage> {
               if (allNotes.isEmpty) {
                 return Center(child: Text("Belum ada notes"));
               }
+
+              // widget yang muncul ketika ada note
               return ListView.builder(
                 itemCount: allNotes.length,
                 itemBuilder: (context, index) {

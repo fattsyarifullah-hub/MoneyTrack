@@ -8,11 +8,17 @@ class TablePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder<List<Map<String, dynamic>>>(
+
+        // mendengarkan perubahan data note yang disimpan di notenotifier
         valueListenable: Notenotifier.noteNotifier,
+
+        // membangun tampilan berdasarkan data note yang ada
         builder: (BuildContext context, noteNotifier, Widget? child) {
           if (noteNotifier.isEmpty) {
             return Center(child: Text("Belum ada notes"));
           }
+          
+          // widget yang muncul ketika ada note
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: SingleChildScrollView(
