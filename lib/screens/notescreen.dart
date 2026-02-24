@@ -110,16 +110,51 @@ class _NotePageState extends State<NotePage> {
               decoration: InputDecoration(
                 labelText: "date",
                 suffixIcon: Icon(Icons.calendar_today),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 3.0,
+                    color: Theme.of(context).colorScheme.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
               ),
             ),
             TextField(
               controller: costController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "cost"),
+              decoration: InputDecoration(
+                labelText: "cost",
+                labelStyle: TextStyle(
+                  fontFamily: "Denk One",
+                  fontSize: 15.0,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 3.0,
+                    color: Theme.of(context).colorScheme.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
             ),
             TextField(
               controller: detailController,
-              decoration: InputDecoration(labelText: "detail"),
+              decoration: InputDecoration(
+                labelText: "detail",
+                labelStyle: TextStyle(
+                  fontFamily: "Denk One",
+                  fontSize: 15.0,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 3.0,
+                    color: Theme.of(context).colorScheme.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
             ),
             Container(
               child: Row(
@@ -132,10 +167,15 @@ class _NotePageState extends State<NotePage> {
                         selectedTypeNote = selectedValue!;
                       });
                     },
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Theme.of(context).colorScheme.onPrimary;
+                        }
+                        return Theme.of(context).colorScheme.primary;
+                      }),
+                    ),
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.tertiary,
-                      ),
                       child: Text("income"),
                     ),
                   ),
@@ -147,10 +187,15 @@ class _NotePageState extends State<NotePage> {
                         selectedTypeNote = selectedValue!;
                       });
                     },
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Theme.of(context).colorScheme.onPrimary;
+                        }
+                        return Theme.of(context).colorScheme.primary;
+                      }),
+                    ),
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
                       child: Text("spending"),
                     ),
                   ),
@@ -164,7 +209,11 @@ class _NotePageState extends State<NotePage> {
           // button batal menambah note
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Batal"),
+            child: Text("cancel"),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+            ),
           ),
 
           // button untuk simpan note
@@ -173,7 +222,11 @@ class _NotePageState extends State<NotePage> {
               await addMoreNote();
               Navigator.pop(context);
             },
-            child: Text("Simpan"),
+            child: Text("Add"),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
           ),
         ],
       ),
@@ -251,6 +304,11 @@ class _NotePageState extends State<NotePage> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: showPopupNote,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
         child: Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
