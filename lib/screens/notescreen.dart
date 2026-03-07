@@ -226,7 +226,7 @@ class _NotePageState extends State<NotePage> {
             style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
+            ),
           ),
         ],
       ),
