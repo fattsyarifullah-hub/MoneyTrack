@@ -21,18 +21,25 @@ class _TablePageState extends State<TablePage> {
         // membangun tampilan berdasarkan data note yang ada
         builder: (BuildContext context, noteNotifier, Widget? child) {
           int saldo = 0;
+          int totalIncome = 0;
+          int totalSpending = 0;
 
+          // looping perhitungan saldo apabila sesuai dengan datanya
           for (var note in noteNotifier) {
             int cost = note["cost"] as int;
             String type = note["opsi"];
 
+            // type nya income maka saldo akan bertambah
             if (type == "income") {
               saldo += cost;
+              totalIncome += cost;
+              // type nya spending maka saldo akan berkurang
             } else if (type == "spending") {
               saldo -= cost;
+              totalSpending += cost;
             }
           }
-          
+
           if (noteNotifier.isEmpty) {
             return Center(child: Text("Belum ada notes"));
           }
@@ -40,8 +47,12 @@ class _TablePageState extends State<TablePage> {
           // widget yang muncul ketika ada note
           return Column(
             children: [
+              // widget saldo
               Text("Saldo: $saldo", style: TextStyle(color: Colors.white)),
+              Text("Total Income: $totalIncome", style: TextStyle(color: Colors.white),),
+              Text("Total Spending: $totalSpending", style: TextStyle(color: Colors.white),),
               SizedBox(height: 10.0),
+              // table note
               SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: SingleChildScrollView(
@@ -73,6 +84,7 @@ class _TablePageState extends State<TablePage> {
                         ),
                       ),
                     ],
+                    // row data table
                     rows: noteNotifier.map((note) {
                       final date = DateTime.parse(note["date"]);
                       int cost = note["cost"] as int;
