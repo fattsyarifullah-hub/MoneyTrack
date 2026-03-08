@@ -32,6 +32,7 @@ class _TablePageState extends State<TablePage> {
               saldo -= cost;
             }
           }
+          
           if (noteNotifier.isEmpty) {
             return Center(child: Text("Belum ada notes"));
           }
