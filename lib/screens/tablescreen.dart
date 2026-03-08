@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../notifier/notenotifier.dart';
+import '../notifier/saldonotifier.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});
@@ -40,6 +41,8 @@ class _TablePageState extends State<TablePage> {
             }
           }
 
+          Saldonotifier.saldoNotifier.value = saldo;
+
           if (noteNotifier.isEmpty) {
             return Center(child: Text("Belum ada notes"));
           }
@@ -49,8 +52,14 @@ class _TablePageState extends State<TablePage> {
             children: [
               // widget saldo
               Text("Saldo: $saldo", style: TextStyle(color: Colors.white)),
-              Text("Total Income: $totalIncome", style: TextStyle(color: Colors.white),),
-              Text("Total Spending: $totalSpending", style: TextStyle(color: Colors.white),),
+              Text(
+                "Total Income: $totalIncome",
+                style: TextStyle(color: Colors.white),
+              ),
+              Text(
+                "Total Spending: $totalSpending",
+                style: TextStyle(color: Colors.white),
+              ),
               SizedBox(height: 10.0),
               // table note
               SingleChildScrollView(
