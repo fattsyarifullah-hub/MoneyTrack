@@ -1,31 +1,143 @@
 import 'package:flutter/material.dart';
+import '../notifier/targetnotifier.dart';
+import '../model/targetModel.dart';
+import '../notifier/saldonotifier.dart';
 
-class TargetPage extends StatelessWidget {
+class TargetPage extends StatefulWidget {
   const TargetPage({super.key});
+
+  @override
+  State<TargetPage> createState() => _TargetPageState();
+}
+
+class _TargetPageState extends State<TargetPage> {
+  // poin poin yang diinput user
+  final TextEditingController costTargetController = TextEditingController();
+  DateTime? startDate;
+  DateTime? finalDate;
+
+  // function untuk menampilkan popup target
+  void showPopupTarget() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Target Tabungan"),
+        content: Column(
+          children: [
+            // input untuk text target cost
+            TextField(
+              controller: costTargetController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: "target uang"
+              ),
+            ),
+
+            // button untuk setting date awal
+            ElevatedButton(
+              onPressed: () async {
+                startDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2026),
+                  lastDate: DateTime(2100),
+                );
+              },
+              child: Text("Pilih tanggal Mulai"),
+            ),
+            SizedBox(height: 10.0),
+
+            // button untuk setting date akhir
+            ElevatedButton(
+              onPressed: () async {
+                finalDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2026),
+                  lastDate: DateTime(2100),
+                );
+              },
+              child: Text("Pilih tanggal selesai"),
+            ),
+          ],
+        ),
+
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              // parsing dari controller text ke bentuk int
+              int targetCost = int.parse(costTargetController.text);
+
+              // masukin dari notifier ke model
+              Targetnotifier.targetNotifier.value = TargetModel(
+                startDate: startDate!,
+                finalDate: finalDate!,
+                targetCost: targetCost,
+              );
+
+              Navigator.pop(context);
+            },
+            child: Text("simpan"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text("coba pop up"),
-                content: Text("ini nyoba pop up aja"),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("selesai"),
-                  ),
-                ],
+      body: ValueListenableBuilder<TargetModel?>(
+        // value target
+        valueListenable: Targetnotifier.targetNotifier,
+        builder: (BuildContext context, target, child) {
+          if (target == null) {
+            return Text("Belum ada Target");
+          }
+
+          return ValueListenableBuilder(
+            // data saldo
+            valueListenable: Saldonotifier.saldoNotifier,
+            builder: (BuildContext context, saldo, child) {
+              // variabel progress saldo dibagi dengan target cost
+              double progress = saldo / target.targetCost;
+  
+              if (progress > 1) {
+                progress = 1;
+              }
+
+              return Container(
+                width: 250.0,
+                height: 250.0,
+                padding: EdgeInsets.all(10.0),
+                margin: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(color: Colors.red),
+
+                child: Column(
+                  children: [
+                    Text("Target: ${target.targetCost}"),
+                    SizedBox(height: 10.0),
+                    Text("Uang yang sudah terkumpul: $saldo"),
+                    SizedBox(height: 25.0),
+                    LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.grey,
+                      valueColor: AlwaysStoppedAnimation(Colors.green),
+                    ),
+                  ],
+                ),
               );
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: showPopupTarget,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
         child: Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

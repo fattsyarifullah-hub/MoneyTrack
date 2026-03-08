@@ -30,7 +30,7 @@ class _NotePageState extends State<NotePage> {
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      lastDate: DateTime.now(),
     );
 
     if (pickedDate != null) {
@@ -48,8 +48,8 @@ class _NotePageState extends State<NotePage> {
         selectedTypeNote.isEmpty)
       return;
 
-    // ubah format string jadi double
-    final double? cost = double.tryParse(costController.text);
+    // ubah format string jadi int
+    final int? cost = int.tryParse(costController.text);
     if (cost == null) return;
 
     // bentuk note dalam map
@@ -114,9 +114,9 @@ class _NotePageState extends State<NotePage> {
                   borderSide: BorderSide(
                     width: 3.0,
                     color: Theme.of(context).colorScheme.primary,
-                    ),
-                    borderRadius: BorderRadius.circular(5.0),
                   ),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
               ),
             ),
             TextField(
@@ -133,10 +133,10 @@ class _NotePageState extends State<NotePage> {
                   borderSide: BorderSide(
                     width: 3.0,
                     color: Theme.of(context).colorScheme.primary,
-                    ),
-                    borderRadius: BorderRadius.circular(5.0),
                   ),
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
+              ),
             ),
             TextField(
               controller: detailController,
@@ -151,10 +151,10 @@ class _NotePageState extends State<NotePage> {
                   borderSide: BorderSide(
                     width: 3.0,
                     color: Theme.of(context).colorScheme.primary,
-                    ),
-                    borderRadius: BorderRadius.circular(5.0),
                   ),
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
+              ),
             ),
             Container(
               child: Row(
@@ -168,16 +168,16 @@ class _NotePageState extends State<NotePage> {
                       });
                     },
                     style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                      foregroundColor: WidgetStateProperty.resolveWith<Color>((
+                        states,
+                      ) {
                         if (states.contains(WidgetState.selected)) {
                           return Theme.of(context).colorScheme.onPrimary;
                         }
                         return Theme.of(context).colorScheme.primary;
                       }),
                     ),
-                    child: Container(
-                      child: Text("income"),
-                    ),
+                    child: Container(child: Text("income")),
                   ),
                   RadioMenuButton(
                     value: "spending",
@@ -188,16 +188,16 @@ class _NotePageState extends State<NotePage> {
                       });
                     },
                     style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                      foregroundColor: WidgetStateProperty.resolveWith<Color>((
+                        states,
+                      ) {
                         if (states.contains(WidgetState.selected)) {
                           return Theme.of(context).colorScheme.onPrimary;
                         }
                         return Theme.of(context).colorScheme.primary;
                       }),
                     ),
-                    child: Container(
-                      child: Text("spending"),
-                    ),
+                    child: Container(child: Text("spending")),
                   ),
                 ],
               ),
@@ -205,7 +205,6 @@ class _NotePageState extends State<NotePage> {
           ],
         ),
         actions: [
-
           // button batal menambah note
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -245,62 +244,56 @@ class _NotePageState extends State<NotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder(
-
         // mendengarkan perubahan data note yang disimpan di notenotifier
         valueListenable: Notenotifier.noteNotifier,
 
         // membangun tampilan berdasarkan data note yang ada
-        builder:
-            (
-              context,
-              allNotes,
-              _,
-            ) {
-              if (allNotes.isEmpty) {
-                return Center(child: Text("Belum ada notes"));
-              }
+        builder: (context, allNotes, _) {
+          if (allNotes.isEmpty) {
+            return Center(child: Text("Belum ada notes"));
+          }
 
-              // widget yang muncul ketika ada note
-              return ListView.builder(
-                itemCount: allNotes.length,
-                itemBuilder: (context, index) {
-                  final displayNote = allNotes[index];
-                  final String? type = displayNote['opsi'];
-                  final DateTime date = DateTime.parse(displayNote['date']);
-                  return Column(
-                    children: [
-                      Container(
-                        width: 350,
-                        height: 125,
-                        padding: EdgeInsetsGeometry.only(top: 25.0),
-                        decoration: BoxDecoration(
-                          color: getColorContainer(type),
-                          borderRadius: BorderRadius.circular(25),
+          // widget yang muncul ketika ada note
+          return ListView.builder(
+            itemCount: allNotes.length,
+            itemBuilder: (context, index) {
+              final displayNote = allNotes[index];
+              final String? type = displayNote['opsi'];
+              final DateTime date = DateTime.parse(displayNote['date']);
+              return Column(
+                children: [
+                  Container(
+                    width: 350,
+                    height: 125,
+                    padding: EdgeInsetsGeometry.only(top: 25.0),
+                    decoration: BoxDecoration(
+                      color: getColorContainer(type),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
+                          style: TextStyle(color: getColorTextNote(type)),
                         ),
-                        child: Column(
-                          children: [
-                            Text(
-                              "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
-                              style: TextStyle(color: getColorTextNote(type)),
-                            ),
-                            Text(
-                              displayNote['cost'].toString(),
-                              style: TextStyle(color: getColorTextNote(type)),
-                            ),
-                            Text(
-                              displayNote['detail'],
-                              style: TextStyle(color: getColorTextNote(type)),
-                            ),
-                          ],
+                        Text(
+                          displayNote['cost'].toString(),
+                          style: TextStyle(color: getColorTextNote(type)),
                         ),
-                      ),
-                      SizedBox(height: 10.0),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+                        Text(
+                          displayNote['detail'],
+                          style: TextStyle(color: getColorTextNote(type)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                ],
+              );
+            },
+          );
+        },
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: showPopupNote,
