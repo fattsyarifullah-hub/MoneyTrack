@@ -19,7 +19,7 @@ class noteLogic {
     // ubah ke format json
     final List decoded = jsonDecode(jsonData);
 
-    // await prefs.remove(keyNotes);
+    await prefs.remove(keyNotes);
 
     // mengirim dalam format map
     Notenotifier.noteNotifier.value = decoded

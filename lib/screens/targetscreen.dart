@@ -11,10 +11,12 @@ class TargetPage extends StatefulWidget {
 }
 
 class _TargetPageState extends State<TargetPage> {
+  // poin poin yang diinput user
   final TextEditingController costTargetController = TextEditingController();
   DateTime? startDate;
   DateTime? finalDate;
 
+  // function untuk menampilkan popup target
   void showPopupTarget() {
     showDialog(
       context: context,
@@ -22,6 +24,7 @@ class _TargetPageState extends State<TargetPage> {
         title: Text("Target Tabungan"),
         content: Column(
           children: [
+            // input untuk text target cost
             TextField(
               controller: costTargetController,
               keyboardType: TextInputType.number,
@@ -29,6 +32,8 @@ class _TargetPageState extends State<TargetPage> {
                 labelText: "target uang"
               ),
             ),
+
+            // button untuk setting date awal
             ElevatedButton(
               onPressed: () async {
                 startDate = await showDatePicker(
@@ -42,6 +47,7 @@ class _TargetPageState extends State<TargetPage> {
             ),
             SizedBox(height: 10.0),
 
+            // button untuk setting date akhir
             ElevatedButton(
               onPressed: () async {
                 finalDate = await showDatePicker(
@@ -59,8 +65,10 @@ class _TargetPageState extends State<TargetPage> {
         actions: [
           ElevatedButton(
             onPressed: () {
+              // parsing dari controller text ke bentuk int
               int targetCost = int.parse(costTargetController.text);
 
+              // masukin dari notifier ke model
               Targetnotifier.targetNotifier.value = TargetModel(
                 startDate: startDate!,
                 finalDate: finalDate!,
@@ -80,6 +88,7 @@ class _TargetPageState extends State<TargetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder<TargetModel?>(
+        // value target
         valueListenable: Targetnotifier.targetNotifier,
         builder: (BuildContext context, target, child) {
           if (target == null) {
@@ -87,15 +96,19 @@ class _TargetPageState extends State<TargetPage> {
           }
 
           return ValueListenableBuilder(
+            // data saldo
             valueListenable: Saldonotifier.saldoNotifier,
             builder: (BuildContext context, saldo, child) {
+              // variabel progress saldo dibagi dengan target cost
               double progress = saldo / target.targetCost;
-
+  
               if (progress > 1) {
                 progress = 1;
               }
 
               return Container(
+                width: 250.0,
+                height: 250.0,
                 padding: EdgeInsets.all(10.0),
                 margin: EdgeInsets.all(10.0),
                 decoration: BoxDecoration(color: Colors.red),

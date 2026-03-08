@@ -1,3 +1,4 @@
+// model untuk target
 class TargetModel {
   final DateTime startDate;
   final DateTime finalDate;
