@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moneytrack/notifier/notenotifier.dart';
 import '/logic/noteLogic.dart';
+import 'package:intl/intl.dart';
 
 class NotePage extends StatefulWidget {
   const NotePage({super.key});
@@ -29,7 +30,7 @@ class _NotePageState extends State<NotePage> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime(2026),
       lastDate: DateTime.now(),
     );
 
@@ -126,7 +127,7 @@ class _NotePageState extends State<NotePage> {
                 labelText: "cost",
                 labelStyle: TextStyle(
                   fontFamily: "Denk One",
-                  fontSize: 15.0,
+                  fontSize: 20.0,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 focusedBorder: UnderlineInputBorder(
@@ -144,7 +145,7 @@ class _NotePageState extends State<NotePage> {
                 labelText: "detail",
                 labelStyle: TextStyle(
                   fontFamily: "Denk One",
-                  fontSize: 15.0,
+                  fontSize: 20.0,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 focusedBorder: UnderlineInputBorder(
@@ -156,10 +157,12 @@ class _NotePageState extends State<NotePage> {
                 ),
               ),
             ),
+            SizedBox(height: 10.0,),
             Container(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  RadioMenuButton(
+                  RadioMenuButton<String>(
                     value: "income",
                     groupValue: selectedTypeNote,
                     onChanged: (selectedValue) {
@@ -168,18 +171,17 @@ class _NotePageState extends State<NotePage> {
                       });
                     },
                     style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith<Color>((
-                        states,
-                      ) {
-                        if (states.contains(WidgetState.selected)) {
-                          return Theme.of(context).colorScheme.onPrimary;
-                        }
-                        return Theme.of(context).colorScheme.primary;
-                      }),
-                    ),
+                      foregroundColor: WidgetStateProperty.all(Color(0xFFD9D9D9)),
+                      backgroundColor: WidgetStateProperty.all(Color(0xFF100F1F)),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadiusGeometry.circular(25.0)
+                        )
+                      )
+                      ),
                     child: Container(child: Text("income")),
                   ),
-                  RadioMenuButton(
+                  RadioMenuButton<String>(
                     value: "spending",
                     groupValue: selectedTypeNote,
                     onChanged: (selectedValue) {
@@ -188,14 +190,13 @@ class _NotePageState extends State<NotePage> {
                       });
                     },
                     style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith<Color>((
-                        states,
-                      ) {
-                        if (states.contains(WidgetState.selected)) {
-                          return Theme.of(context).colorScheme.onPrimary;
-                        }
-                        return Theme.of(context).colorScheme.primary;
-                      }),
+                      foregroundColor: WidgetStateProperty.all(Color(0xFFD9D9D9)),
+                      backgroundColor: WidgetStateProperty.all(Color(0xFFFF514F)),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadiusGeometry.circular(25.0)
+                        )
+                      )
                     ),
                     child: Container(child: Text("spending")),
                   ),
@@ -210,7 +211,7 @@ class _NotePageState extends State<NotePage> {
             onPressed: () => Navigator.pop(context),
             child: Text("cancel"),
             style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.tertiary,
             ),
           ),
@@ -271,13 +272,13 @@ class _NotePageState extends State<NotePage> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                     child: Column(
-                      children: [
+                      children: <Widget>[
                         Text(
                           "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
                           style: TextStyle(color: getColorTextNote(type)),
                         ),
                         Text(
-                          displayNote['cost'].toString(),
+                          NumberFormat.simpleCurrency(locale: 'id', decimalDigits: 0).format(displayNote['cost']),
                           style: TextStyle(color: getColorTextNote(type)),
                         ),
                         Text(

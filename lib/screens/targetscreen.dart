@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../notifier/targetnotifier.dart';
 import '../model/targetModel.dart';
 import '../notifier/saldonotifier.dart';
+import 'package:intl/intl.dart';
 
 class TargetPage extends StatefulWidget {
   const TargetPage({super.key});
@@ -63,6 +64,9 @@ class _TargetPageState extends State<TargetPage> {
         ),
 
         actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), 
+            child: Text('cancel')),
           ElevatedButton(
             onPressed: () {
               // parsing dari controller text ke bentuk int
@@ -86,6 +90,11 @@ class _TargetPageState extends State<TargetPage> {
 
   @override
   Widget build(BuildContext context) {
+      final formatRupiah = NumberFormat.simpleCurrency(
+      locale: 'id',
+      decimalDigits: 0,
+    );
+
     return Scaffold(
       body: ValueListenableBuilder<TargetModel?>(
         // value target
@@ -115,9 +124,9 @@ class _TargetPageState extends State<TargetPage> {
 
                 child: Column(
                   children: [
-                    Text("Target: ${target.targetCost}"),
+                    Text("Target: ${formatRupiah.format(target.targetCost)}"),
                     SizedBox(height: 10.0),
-                    Text("Uang yang sudah terkumpul: $saldo"),
+                    Text("Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}"),
                     SizedBox(height: 25.0),
                     LinearProgressIndicator(
                       value: progress,

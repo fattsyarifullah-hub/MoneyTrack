@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../notifier/notenotifier.dart';
 import '../notifier/saldonotifier.dart';
+import 'package:intl/intl.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});
@@ -14,6 +15,12 @@ class _TablePageState extends State<TablePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final formatRupiah = NumberFormat.simpleCurrency(
+    locale: 'id',
+    decimalDigits: 0,
+  );
+
     return Scaffold(
       body: ValueListenableBuilder<List<Map<String, dynamic>>>(
         // mendengarkan perubahan data note yang disimpan di notenotifier
@@ -51,13 +58,13 @@ class _TablePageState extends State<TablePage> {
           return Column(
             children: [
               // widget saldo
-              Text("Saldo: $saldo", style: TextStyle(color: Colors.white)),
+              Text("Saldo ${formatRupiah.format(saldo)}", style: TextStyle(color: Colors.white)),
               Text(
-                "Total Income: $totalIncome",
+                "Total Income ${formatRupiah.format(totalIncome)}",
                 style: TextStyle(color: Colors.white),
               ),
               Text(
-                "Total Spending: $totalSpending",
+                "Total Spending ${formatRupiah.format(totalSpending)}",
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox(height: 10.0),
@@ -109,7 +116,7 @@ class _TablePageState extends State<TablePage> {
                           ),
                           DataCell(
                             Text(
-                              cost.toString(),
+                              NumberFormat.simpleCurrency(locale: 'id', decimalDigits: 0).format(cost),
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
