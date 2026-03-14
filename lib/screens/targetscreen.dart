@@ -17,6 +17,13 @@ class _TargetPageState extends State<TargetPage> {
   DateTime? startDate;
   DateTime? finalDate;
 
+  @override
+  void initState() {
+    super.initState();
+    // Memuat data target dari SharedPreferences saat screen dibuka
+    Targetnotifier.loadTarget();
+  }
+
   // function untuk menampilkan popup target
   void showPopupTarget() {
     showDialog(
@@ -29,9 +36,7 @@ class _TargetPageState extends State<TargetPage> {
             TextField(
               controller: costTargetController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "target uang"
-              ),
+              decoration: InputDecoration(labelText: "target uang"),
             ),
 
             // button untuk setting date awal
@@ -65,19 +70,26 @@ class _TargetPageState extends State<TargetPage> {
 
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context), 
-            child: Text('cancel')),
+            onPressed: () => Navigator.pop(context),
+            child: Text('cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               // parsing dari controller text ke bentuk int
               int targetCost = int.parse(costTargetController.text);
 
-              // masukin dari notifier ke model
-              Targetnotifier.targetNotifier.value = TargetModel(
+              // membuat model target, data target akan masuk dari sini
+              TargetModel newTarget = TargetModel(
                 startDate: startDate!,
                 finalDate: finalDate!,
                 targetCost: targetCost,
               );
+
+              // masukin ke notifier kalau valuenya adalah yang sama dengan model target
+              Targetnotifier.targetNotifier.value = newTarget;
+
+              // Simpan data target ke SharedPreferences
+              Targetnotifier.saveTarget(newTarget);
 
               Navigator.pop(context);
             },
@@ -90,7 +102,7 @@ class _TargetPageState extends State<TargetPage> {
 
   @override
   Widget build(BuildContext context) {
-      final formatRupiah = NumberFormat.simpleCurrency(
+    final formatRupiah = NumberFormat.simpleCurrency(
       locale: 'id',
       decimalDigits: 0,
     );
@@ -110,7 +122,7 @@ class _TargetPageState extends State<TargetPage> {
             builder: (BuildContext context, saldo, child) {
               // variabel progress saldo dibagi dengan target cost
               double progress = saldo / target.targetCost;
-  
+
               if (progress > 1) {
                 progress = 1;
               }
@@ -126,12 +138,20 @@ class _TargetPageState extends State<TargetPage> {
                   children: [
                     Text("Target: ${formatRupiah.format(target.targetCost)}"),
                     SizedBox(height: 10.0),
-                    Text("Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}"),
+                    Text(
+                      "Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}",
+                    ),
                     SizedBox(height: 25.0),
-                    LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey,
-                      valueColor: AlwaysStoppedAnimation(Colors.green),
+                    SizedBox(
+                      height: 20.0,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          backgroundColor: Colors.grey,
+                          valueColor: AlwaysStoppedAnimation(Colors.green),
+                        ),
+                      ),
                     ),
                   ],
                 ),
