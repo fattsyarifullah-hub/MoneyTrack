@@ -3,6 +3,7 @@ import '../notifier/targetnotifier.dart';
 import '../model/targetModel.dart';
 import '../notifier/saldonotifier.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TargetPage extends StatefulWidget {
   const TargetPage({super.key});
@@ -29,7 +30,11 @@ class _TargetPageState extends State<TargetPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Target Tabungan"),
+        title: Text(
+          "Target Tabungan",
+          style: GoogleFonts.bebasNeue(fontSize: 20.0),
+          textAlign: TextAlign.center,
+        ),
         content: Column(
           children: [
             // input untuk text target cost
@@ -49,7 +54,15 @@ class _TargetPageState extends State<TargetPage> {
                   lastDate: DateTime(2100),
                 );
               },
-              child: Text("Pilih tanggal Mulai"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                elevation: 5.0,
+              ),
+              child: Text(
+                "Pilih tanggal Mulai",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
             SizedBox(height: 10.0),
 
@@ -63,18 +76,58 @@ class _TargetPageState extends State<TargetPage> {
                   lastDate: DateTime(2100),
                 );
               },
-              child: Text("Pilih tanggal selesai"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                elevation: 5.0,
+              ),
+              child: Text(
+                "Pilih tanggal selesai",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),
 
         actions: [
+          // button untuk cancel
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('cancel'),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              elevation: 5.0,
+            ),
+            child: Text(
+              'cancel',
+              style: GoogleFonts.montserrat(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
+          // button untuk menyimpan data target, data akan masuk ke model target dan disimpan di notifier target
           ElevatedButton(
             onPressed: () {
+              if (costTargetController.text.isEmpty ||
+                  startDate == null ||
+                  finalDate == null) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Error"),
+                      content: Text("Please fill all fields"),
+                      actions: [
+                        TextButton(
+                          child: Text("OK"),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
               // parsing dari controller text ke bentuk int
               int targetCost = int.parse(costTargetController.text);
 
@@ -93,7 +146,13 @@ class _TargetPageState extends State<TargetPage> {
 
               Navigator.pop(context);
             },
-            child: Text("simpan"),
+            child: Text(
+              "simpan",
+              style: GoogleFonts.montserrat(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
@@ -102,70 +161,103 @@ class _TargetPageState extends State<TargetPage> {
 
   @override
   Widget build(BuildContext context) {
+    // format untuk menampilkan data cost yang berantakan menjadi auto rupiah
     final formatRupiah = NumberFormat.simpleCurrency(
       locale: 'id',
       decimalDigits: 0,
     );
 
     return Scaffold(
-      body: ValueListenableBuilder<TargetModel?>(
-        // value target
-        valueListenable: Targetnotifier.targetNotifier,
-        builder: (BuildContext context, target, child) {
-          if (target == null) {
-            return Text("Belum ada Target");
-          }
-
-          return ValueListenableBuilder(
-            // data saldo
-            valueListenable: Saldonotifier.saldoNotifier,
-            builder: (BuildContext context, saldo, child) {
-              // variabel progress saldo dibagi dengan target cost
-              double progress = saldo / target.targetCost;
-
-              if (progress > 1) {
-                progress = 1;
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ValueListenableBuilder<TargetModel?>(
+            // value target
+            valueListenable: Targetnotifier.targetNotifier,
+            builder: (BuildContext context, target, child) {
+              if (target == null) {
+                return Text("Belum ada Target");
               }
 
-              return Container(
-                width: 250.0,
-                height: 250.0,
-                padding: EdgeInsets.all(10.0),
-                margin: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(color: Colors.red),
+              return ValueListenableBuilder(
+                // data saldo
+                valueListenable: Saldonotifier.saldoNotifier,
+                builder: (BuildContext context, saldo, child) {
+                  // variabel progress saldo dibagi dengan target cost
+                  double progress = saldo / target.targetCost;
 
-                child: Column(
-                  children: [
-                    Text("Target: ${formatRupiah.format(target.targetCost)}"),
-                    SizedBox(height: 10.0),
-                    Text(
-                      "Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}",
+                  if (progress > 1) {
+                    progress = 1;
+                  }
+
+                  return Container(
+                    width: 250.0,
+                    height: 150.0,
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromARGB(255, 227, 63, 164),
+                          Color.fromARGB(255, 219, 41, 104),
+                          Color.fromARGB(255, 165, 14, 67),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    SizedBox(height: 25.0),
-                    SizedBox(
-                      height: 20.0,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          backgroundColor: Colors.grey,
-                          valueColor: AlwaysStoppedAnimation(Colors.green),
-                        ),
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Target: ${formatRupiah.format(target.targetCost)}",
+                            style: GoogleFonts.bebasNeue(
+                              fontSize: 20.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10.0),
+                          Text(
+                            "Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 25.0),
+                          SizedBox(
+                            height: 20.0,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: LinearProgressIndicator(
+                                value: progress,
+                                backgroundColor: Color(0xFF100F1F),
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.green,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+        ],
       ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: showPopupTarget,
         backgroundColor: Theme.of(context).colorScheme.secondary,
         foregroundColor: Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.circular(30.0),
         ),
         child: Icon(Icons.add),
       ),

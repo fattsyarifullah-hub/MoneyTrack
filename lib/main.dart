@@ -12,7 +12,10 @@ void main() async {
   // Memuat data target dari SharedPreferences
   await noteLogic.loadNote();
   await Targetnotifier.loadTarget();
-  runApp(const TrackMoney());
+  runApp(
+    // gunakan device preview untuk testing di berbagai device
+    const TrackMoney()
+  );
 }
 
 class TrackMoney extends StatelessWidget {

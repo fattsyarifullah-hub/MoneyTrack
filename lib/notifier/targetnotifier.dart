@@ -21,19 +21,21 @@ class Targetnotifier {
     final prefs = await SharedPreferences.getInstance();
     // ambil kunci untuk ngeliat data yang ada
     final targetJson = prefs.getString(_targetKey);
-    
+
+    // await prefs.remove(_targetKey);
+
     // jika data ada, maka ambil function di model dari JSON ke dalam bentuk data asli untuk ditampilkan
     if (targetJson != null) {
       targetNotifier.value = TargetModel.fromJsonString(targetJson);
     }
   }
 
-  // Menghapus data target dari SharedPreferences
-  static Future<void> deleteTarget() async {
-    final prefs = await SharedPreferences.getInstance();
-    // untuk delete data target
-    await prefs.remove(_targetKey);
-    // data berubah jadi null
-    targetNotifier.value = null;
-  }
+//   // Menghapus data target dari SharedPreferences
+//   static Future<void> deleteTarget() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     // untuk delete data target
+//     await prefs.remove(_targetKey);
+//     // data berubah jadi null
+//     targetNotifier.value = null;
+//   }
 }

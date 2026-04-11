@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moneytrack/notifier/notenotifier.dart';
 import '/logic/noteLogic.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NotePage extends StatefulWidget {
   const NotePage({super.key});
@@ -17,6 +18,7 @@ class _NotePageState extends State<NotePage> {
   final TextEditingController costController = TextEditingController();
   final TextEditingController detailController = TextEditingController();
 
+  // untuk menyimpan data tipe input yang dipilih user
   String selectedTypeNote = "";
 
   @override
@@ -30,7 +32,7 @@ class _NotePageState extends State<NotePage> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2026),
+      firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
 
@@ -47,7 +49,21 @@ class _NotePageState extends State<NotePage> {
         costController.text.isEmpty ||
         detailController.text.isEmpty ||
         selectedTypeNote.isEmpty)
-      return;
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("Please fill all fields"),
+            actions: [
+              TextButton(
+                child: Text("OK"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          );
+        },
+      );
 
     // ubah format string jadi int
     final int? cost = int.tryParse(costController.text);
@@ -87,11 +103,22 @@ class _NotePageState extends State<NotePage> {
   // function warna text berdasarkan tipe input
   getColorTextNote(String? type) {
     if (type == "income") {
-      return Colors.white;
+      return Colors.green;
     } else if (type == "spending") {
-      return Colors.white;
+      return Colors.red;
     } else {
       return Colors.grey;
+    }
+  }
+
+  // function untuk icon sesuai tipe input
+  getIconNote(String? type) {
+    if (type == "income") {
+      return Icon(Icons.add, color: Colors.green);
+    } else if (type == "spending") {
+      return Icon(Icons.remove, color: Colors.red);
+    } else {
+      return Icon(Icons.help_outline, color: Colors.grey);
     }
   }
 
@@ -100,7 +127,15 @@ class _NotePageState extends State<NotePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Add Note"),
+        title: Text(
+          "Add Note",
+          style: GoogleFonts.bebasNeue(
+            fontSize: 24.0,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 4.0,
+          ),
+          textAlign: TextAlign.center,
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -118,17 +153,22 @@ class _NotePageState extends State<NotePage> {
                   ),
                   borderRadius: BorderRadius.circular(5.0),
                 ),
+                labelStyle: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20.0,
+                  letterSpacing: 2.5,
+                ),
               ),
             ),
             TextField(
               controller: costController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: "cost",
-                labelStyle: TextStyle(
-                  fontFamily: "Denk One",
+                labelText: "Cost",
+                labelStyle: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w700,
                   fontSize: 20.0,
-                  color: Theme.of(context).colorScheme.primary,
+                  letterSpacing: 2.5,
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -142,11 +182,11 @@ class _NotePageState extends State<NotePage> {
             TextField(
               controller: detailController,
               decoration: InputDecoration(
-                labelText: "detail",
-                labelStyle: TextStyle(
-                  fontFamily: "Denk One",
+                labelText: "Detail",
+                labelStyle: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w700,
                   fontSize: 20.0,
-                  color: Theme.of(context).colorScheme.primary,
+                  letterSpacing: 2.5,
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -157,7 +197,7 @@ class _NotePageState extends State<NotePage> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0,),
+            SizedBox(height: 10.0),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,15 +211,19 @@ class _NotePageState extends State<NotePage> {
                       });
                     },
                     style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.all(Color(0xFFD9D9D9)),
-                      backgroundColor: WidgetStateProperty.all(Color(0xFF100F1F)),
+                      foregroundColor: WidgetStateProperty.all(
+                        Color(0xFFD9D9D9),
+                      ),
+                      backgroundColor: WidgetStateProperty.all(
+                        Color(0xFF100F1F),
+                      ),
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(25.0)
-                        )
-                      )
+                          borderRadius: BorderRadiusGeometry.circular(25.0),
+                        ),
                       ),
-                    child: Container(child: Text("income")),
+                    ),
+                    child: Container(child: Text("Income")),
                   ),
                   RadioMenuButton<String>(
                     value: "spending",
@@ -190,15 +234,19 @@ class _NotePageState extends State<NotePage> {
                       });
                     },
                     style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.all(Color(0xFFD9D9D9)),
-                      backgroundColor: WidgetStateProperty.all(Color(0xFFFF514F)),
+                      foregroundColor: WidgetStateProperty.all(
+                        Color(0xFFD9D9D9),
+                      ),
+                      backgroundColor: WidgetStateProperty.all(
+                        Color(0xFFFF514F),
+                      ),
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(25.0)
-                        )
-                      )
+                          borderRadius: BorderRadiusGeometry.circular(25.0),
+                        ),
+                      ),
                     ),
-                    child: Container(child: Text("spending")),
+                    child: Container(child: Text("Spending")),
                   ),
                 ],
               ),
@@ -251,7 +299,12 @@ class _NotePageState extends State<NotePage> {
         // membangun tampilan berdasarkan data note yang ada
         builder: (context, allNotes, _) {
           if (allNotes.isEmpty) {
-            return Center(child: Text("Belum ada notes"));
+            return Center(
+              child: Text(
+                "Belum ada notes",
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
 
           // widget yang muncul ketika ada note
@@ -264,31 +317,77 @@ class _NotePageState extends State<NotePage> {
               return Column(
                 children: [
                   Container(
-                    width: 350,
-                    height: 125,
-                    padding: EdgeInsetsGeometry.only(top: 25.0),
+                    width: 300,
+                    height: 115,
+                    padding: EdgeInsetsGeometry.only(top: 5.0),
                     decoration: BoxDecoration(
-                      color: getColorContainer(type),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
+                      border: Border(
+                        left: BorderSide(
+                          color: getColorContainer(type),
+                          width: 17.0,
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
-                          style: TextStyle(color: getColorTextNote(type)),
-                        ),
-                        Text(
-                          NumberFormat.simpleCurrency(locale: 'id', decimalDigits: 0).format(displayNote['cost']),
-                          style: TextStyle(color: getColorTextNote(type)),
-                        ),
-                        Text(
-                          displayNote['detail'],
-                          style: TextStyle(color: getColorTextNote(type)),
-                        ),
-                      ],
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 30.0),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
+                                  style: GoogleFonts.montserrat(
+                                    color: const Color.fromARGB(
+                                      255,
+                                      78,
+                                      76,
+                                      76,
+                                    ),
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  displayNote['detail'],
+                                  style: GoogleFonts.bebasNeue(
+                                    color: getColorTextNote(type),
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Container(
+                              child: Row(
+                                children: [
+                                  getIconNote(type),
+                                  Text(
+                                    NumberFormat.simpleCurrency(
+                                      locale: 'id',
+                                      decimalDigits: 0,
+                                    ).format(displayNote['cost']),
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: getColorTextNote(type),
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  SizedBox(height: 5.0),
                 ],
               );
             },
@@ -301,7 +400,7 @@ class _NotePageState extends State<NotePage> {
         backgroundColor: Theme.of(context).colorScheme.secondary,
         foregroundColor: Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.circular(30.0),
         ),
         child: Icon(Icons.add),
       ),

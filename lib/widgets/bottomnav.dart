@@ -11,16 +11,10 @@ class BottomNav extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.note_add_rounded), label: "Notes"),
+        BottomNavigationBarItem(icon: Icon(Icons.table_rows_outlined), label: "Table"),
         BottomNavigationBarItem(
-          icon: Icon(Icons.note),
-          label: "Notes",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.table_chart),
-          label: "Table",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.track_changes),
+          icon: Icon(Icons.track_changes_rounded),
           label: "Target",
         ),
       ],

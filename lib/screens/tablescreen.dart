@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../notifier/notenotifier.dart';
 import '../notifier/saldonotifier.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});
@@ -50,7 +51,12 @@ class _TablePageState extends State<TablePage> {
           Saldonotifier.saldoNotifier.value = saldo;
 
           if (noteNotifier.isEmpty) {
-            return Center(child: Text("Belum ada notes"));
+            return Center(
+              child: Text(
+                "Belum ada notes",
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
 
           // widget yang muncul ketika ada note
@@ -60,37 +66,39 @@ class _TablePageState extends State<TablePage> {
                 Container(
                   width: 450.0,
                   height: 180.0,
-                  padding: EdgeInsets.fromLTRB(45.0, 25.0, 45.0, 25.0),
+                  padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.bottomRight,
+                      end: Alignment.topLeft,
                       colors: [
-                        Color.fromARGB(255, 21, 171, 73),
-                        Color.fromARGB(255, 17, 194, 82),
-                        Color.fromARGB(255, 54, 171, 95),
+                        Color.fromARGB(255, 190, 39, 132),
+                        Color.fromARGB(255, 219, 41, 104),
+                        Color.fromARGB(255, 186, 21, 79),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(35.0),
                   ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
                               "Balance",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             Text(
                               "${formatRupiah.format(saldo)}",
-                              style: TextStyle(
+                              style: GoogleFonts.notoSansGeorgian(
                                 color: Colors.white,
                                 fontSize: 50.0,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ],
@@ -100,13 +108,45 @@ class _TablePageState extends State<TablePage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(
-                              "Income ${formatRupiah.format(totalIncome)}",
-                              style: TextStyle(color: Colors.white),
+                            Container(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "Income",
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${formatRupiah.format(totalIncome)}",
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Spending ${formatRupiah.format(totalSpending)}",
-                              style: TextStyle(color: Colors.white),
+                            Container(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "Spending",
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${formatRupiah.format(totalSpending)}",
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -114,10 +154,9 @@ class _TablePageState extends State<TablePage> {
                     ],
                   ),
                 ),
-                // widget saldo
-                SizedBox(height: 10.0),
                 // table note
-                SingleChildScrollView(
+                Expanded(
+                  child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -125,25 +164,25 @@ class _TablePageState extends State<TablePage> {
                       columns: const [
                         DataColumn(
                           label: Text(
-                            "date",
+                            "DATE",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
                         DataColumn(
                           label: Text(
-                            "cost",
+                            "COST",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
                         DataColumn(
                           label: Text(
-                            "detail",
+                            "DETAIL",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
                         DataColumn(
                           label: Text(
-                            "type",
+                            "TYPE",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -159,7 +198,11 @@ class _TablePageState extends State<TablePage> {
                             DataCell(
                               Text(
                                 "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                             DataCell(
@@ -168,24 +211,39 @@ class _TablePageState extends State<TablePage> {
                                   locale: 'id',
                                   decimalDigits: 0,
                                 ).format(cost),
-                                style: TextStyle(color: Colors.white),
+                                style: GoogleFonts.notoSansGeorgian(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                             DataCell(
                               Text(
                                 detail,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                             DataCell(
-                              Text(type, style: TextStyle(color: Colors.white)),
+                              Text(
+                                type,
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ],
                         );
                       }).toList(),
                     ),
                   ),
-                ),
+                ),)
               ],
             ),
           );
