@@ -50,6 +50,7 @@ class _TablePageState extends State<TablePage> {
 
           Saldonotifier.saldoNotifier.value = saldo;
 
+        // widget yang muncul ketika tidak ada note
           if (noteNotifier.isEmpty) {
             return Center(
               child: Text(
@@ -68,6 +69,7 @@ class _TablePageState extends State<TablePage> {
                   height: 180.0,
                   padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
                   decoration: BoxDecoration(
+                    // membuat warna gradient pada container
                     gradient: LinearGradient(
                       begin: Alignment.bottomRight,
                       end: Alignment.topLeft,
@@ -93,12 +95,19 @@ class _TablePageState extends State<TablePage> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Text(
-                              "${formatRupiah.format(saldo)}",
-                              style: GoogleFonts.notoSansGeorgian(
-                                color: Colors.white,
-                                fontSize: 50.0,
-                                fontWeight: FontWeight.w700,
+                            Container(
+                              width: 370.0,
+                              // agar text saldo tidak overflow ketika jumlahnya banyak, maka digunakan widget FittedBox dengan fit BoxFit.scaleDown
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  "${formatRupiah.format(saldo)}",
+                                  style: GoogleFonts.notoSansGeorgian(
+                                    color: Colors.white,
+                                    fontSize: 50.0,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -118,11 +127,17 @@ class _TablePageState extends State<TablePage> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  Text(
-                                    "${formatRupiah.format(totalIncome)}",
-                                    style: GoogleFonts.notoSansGeorgian(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
+                                  Container(
+                                    width: 75.0,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        "${formatRupiah.format(totalIncome)}",
+                                        style: GoogleFonts.notoSansGeorgian(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -138,11 +153,17 @@ class _TablePageState extends State<TablePage> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  Text(
-                                    "${formatRupiah.format(totalSpending)}",
-                                    style: GoogleFonts.notoSansGeorgian(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
+                                  Container(
+                                    width: 75.0,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        "${formatRupiah.format(totalSpending)}",
+                                        style: GoogleFonts.notoSansGeorgian(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -157,93 +178,94 @@ class _TablePageState extends State<TablePage> {
                 // table note
                 Expanded(
                   child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(
-                          label: Text(
-                            "DATE",
-                            style: TextStyle(color: Colors.white),
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(
+                            label: Text(
+                              "DATE",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            "COST",
-                            style: TextStyle(color: Colors.white),
+                          DataColumn(
+                            label: Text(
+                              "COST",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            "DETAIL",
-                            style: TextStyle(color: Colors.white),
+                          DataColumn(
+                            label: Text(
+                              "DETAIL",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            "TYPE",
-                            style: TextStyle(color: Colors.white),
+                          DataColumn(
+                            label: Text(
+                              "TYPE",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                      ],
-                      // row data table
-                      rows: noteNotifier.map((note) {
-                        final date = DateTime.parse(note["date"]);
-                        int cost = note["cost"] as int;
-                        String detail = note["detail"];
-                        String type = note['opsi'];
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Text(
-                                "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.w500,
+                        ],
+                        // row data table
+                        rows: noteNotifier.map((note) {
+                          final date = DateTime.parse(note["date"]);
+                          int cost = note["cost"] as int;
+                          String detail = note["detail"];
+                          String type = note['opsi'];
+                          return DataRow(
+                            cells: [
+                              DataCell(
+                                Text(
+                                  "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                NumberFormat.simpleCurrency(
-                                  locale: 'id',
-                                  decimalDigits: 0,
-                                ).format(cost),
-                                style: GoogleFonts.notoSansGeorgian(
-                                  color: Colors.white,
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.w500,
+                              DataCell(
+                                Text(
+                                  NumberFormat.simpleCurrency(
+                                    locale: 'id',
+                                    decimalDigits: 0,
+                                  ).format(cost),
+                                  style: GoogleFonts.notoSansGeorgian(
+                                    color: Colors.white,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                detail,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                              DataCell(
+                                Text(
+                                  detail,
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                type,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                              DataCell(
+                                Text(
+                                  type,
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                            ],
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
-                ),)
+                ),
               ],
             ),
           );

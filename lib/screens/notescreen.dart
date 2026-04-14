@@ -309,10 +309,14 @@ class _NotePageState extends State<NotePage> {
 
           // widget yang muncul ketika ada note
           return ListView.builder(
+            // menampilkan data sesuai dengan banyaknya note yang ada di notenotifier
             itemCount: allNotes.length,
             itemBuilder: (context, index) {
+              // mengambil data note untuk ditampilkan berdasarkan index dalam array
               final displayNote = allNotes[index];
+              // mengambil tipe input untuk menentukan warna dan icon
               final String? type = displayNote['opsi'];
+              // mengubah format string ke dalam bentuk data asli untuk ditampilkan
               final DateTime date = DateTime.parse(displayNote['date']);
               return Column(
                 children: [
