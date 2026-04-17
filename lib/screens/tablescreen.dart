@@ -48,6 +48,7 @@ class _TablePageState extends State<TablePage> {
             }
           }
 
+          // update nilai saldo di saldonotifier agar bisa digunakan di screen lain
           Saldonotifier.saldoNotifier.value = saldo;
 
         // widget yang muncul ketika tidak ada note

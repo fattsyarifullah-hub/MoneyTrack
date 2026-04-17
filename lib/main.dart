@@ -93,12 +93,13 @@ class _MainAppState extends State<MainApp> {
   // index default
   int _currentIndex = 0;
 
-  // urutan index
+  // urutan index sesuai dengan urutan screen
   final List<Widget> _pages = [NotePage(), TablePage(), TargetPage()];
 
   // function tap
   void _onNavTapped(int index) {
     setState(() {
+      // ubah index sesuai dengan index yang dipilih
       _currentIndex = index;
     });
   }
@@ -114,6 +115,7 @@ class _MainAppState extends State<MainApp> {
         centerTitle: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
+      // menampilkan screen sesuai dengan index yang dipilih
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNav(
         currentIndex: _currentIndex,

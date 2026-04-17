@@ -30,12 +30,12 @@ class Targetnotifier {
     }
   }
 
-//   // Menghapus data target dari SharedPreferences
-//   static Future<void> deleteTarget() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     // untuk delete data target
-//     await prefs.remove(_targetKey);
-//     // data berubah jadi null
-//     targetNotifier.value = null;
-//   }
+  // Menghapus data target dari SharedPreferences
+  static Future<void> deleteTarget() async {
+    final prefs = await SharedPreferences.getInstance();
+    // untuk delete data target
+    await prefs.remove(_targetKey);
+    // data berubah jadi null
+    targetNotifier.value = null;
+  }
 }

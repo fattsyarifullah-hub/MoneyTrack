@@ -192,7 +192,7 @@ class _TargetPageState extends State<TargetPage> {
 
                   return Container(
                     width: 250.0,
-                    height: 150.0,
+                    height: 250.0,
                     padding: EdgeInsets.all(10.0),
                     margin: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
@@ -210,6 +210,18 @@ class _TargetPageState extends State<TargetPage> {
                     child: Container(
                       child: Column(
                         children: [
+                          // icon untuk menghapus data target
+                          IconButton(
+                            onPressed: () {
+                              // akan memanggil function delete target untuk menghapus data target
+                              Targetnotifier.deleteTarget();
+                              // untuk pengecekan navigasi setelah data target dihapus, jika masih bisa pop maka akan pop, jika tidak maka tidak akan melakukan apa apa
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            icon: Icon(Icons.delete, color: Colors.white),
+                          ),
                           Text(
                             "Target: ${formatRupiah.format(target.targetCost)}",
                             style: GoogleFonts.bebasNeue(
@@ -251,7 +263,7 @@ class _TargetPageState extends State<TargetPage> {
           ),
         ],
       ),
-      
+
       floatingActionButton: FloatingActionButton(
         onPressed: showPopupTarget,
         backgroundColor: Theme.of(context).colorScheme.secondary,
