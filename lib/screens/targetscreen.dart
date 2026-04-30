@@ -15,14 +15,48 @@ class TargetPage extends StatefulWidget {
 class _TargetPageState extends State<TargetPage> {
   // poin poin yang diinput user
   final TextEditingController costTargetController = TextEditingController();
+  final TextEditingController textTargetController = TextEditingController();
   DateTime? startDate;
   DateTime? finalDate;
+  int selisihTanggal = 0;
 
   @override
   void initState() {
     super.initState();
     // Memuat data target dari SharedPreferences saat screen dibuka
     Targetnotifier.loadTarget();
+  }
+
+  // function untuk hitung jarak antara tanggal mulai dan tanggal selesai itu berapa hari
+  void gapTimeFromDate() {
+    if (startDate != null && finalDate != null) {
+      // menghitung gap antara datetima startdate dan final date
+      Duration gap = finalDate!.difference(startDate!);
+
+      // buat state berdasarkan gap di dalam hari
+      setState(() {
+        selisihTanggal = gap.inDays;
+      });
+    }
+  }
+
+  // function untuk membuat perhitungan selisih tanggal menjadi dinamis
+  dinamisGap() {
+    // jika selisih tanggal lebih dari 30 maka lakukan ini
+    if (selisihTanggal > 30) {
+      // jika selisih tanggal lebih dari 365 maka lakukan ini
+      if (selisihTanggal > 365) {
+        // selisih tanggal dibagi 365 yaitu satu tahun dan dibulatkan ke bawah
+        double tahun = (selisihTanggal / 365).floorToDouble();
+        return " ${tahun.toInt()} Tahun";
+      } else {
+        // selisih tanggal dibagi 30 yaitu satu bulan dan dibulatkan ke bawah
+        double bulan = (selisihTanggal / 30).floorToDouble();
+        return " ${bulan.toInt()} Bulan";
+      }
+    } else {
+      return "$selisihTanggal Hari";
+    }
   }
 
   // function untuk menampilkan popup target
@@ -44,15 +78,27 @@ class _TargetPageState extends State<TargetPage> {
               decoration: InputDecoration(labelText: "target uang"),
             ),
 
+            TextField(
+              controller: textTargetController,
+              decoration: InputDecoration(labelText: "Target Planning"),
+            ),
+
             // button untuk setting date awal
             ElevatedButton(
               onPressed: () async {
-                startDate = await showDatePicker(
+                final pickStartDate = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
                   firstDate: DateTime(2026),
                   lastDate: DateTime(2100),
                 );
+
+                // jika sudah memilih start date maka hitung gapnya
+                if (pickStartDate != null) {
+                  startDate = pickStartDate;
+                  gapTimeFromDate();
+                  dinamisGap();
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -69,12 +115,18 @@ class _TargetPageState extends State<TargetPage> {
             // button untuk setting date akhir
             ElevatedButton(
               onPressed: () async {
-                finalDate = await showDatePicker(
+                final pickFinalDate = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
                   firstDate: DateTime(2026),
                   lastDate: DateTime(2100),
                 );
+                if (pickFinalDate != null) {
+                  // jika sudah memilih final date maka hitung gapnya
+                  finalDate = pickFinalDate;
+                  gapTimeFromDate();
+                  dinamisGap();
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -106,10 +158,12 @@ class _TargetPageState extends State<TargetPage> {
               ),
             ),
           ),
+
           // button untuk menyimpan data target, data akan masuk ke model target dan disimpan di notifier target
           ElevatedButton(
             onPressed: () {
               if (costTargetController.text.isEmpty ||
+                  textTargetController.text.isEmpty ||
                   startDate == null ||
                   finalDate == null) {
                 showDialog(
@@ -131,11 +185,14 @@ class _TargetPageState extends State<TargetPage> {
               // parsing dari controller text ke bentuk int
               int targetCost = int.parse(costTargetController.text);
 
+              String targetText = textTargetController.text;
+
               // membuat model target, data target akan masuk dari sini
               TargetModel newTarget = TargetModel(
                 startDate: startDate!,
                 finalDate: finalDate!,
                 targetCost: targetCost,
+                targetText: targetText,
               );
 
               // masukin ke notifier kalau valuenya adalah yang sama dengan model target
@@ -176,7 +233,12 @@ class _TargetPageState extends State<TargetPage> {
             valueListenable: Targetnotifier.targetNotifier,
             builder: (BuildContext context, target, child) {
               if (target == null) {
-                return Text("Belum ada Target");
+                return Center(
+                  child: Text(
+                    "Belum ada Target",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
               }
 
               return ValueListenableBuilder(
@@ -191,8 +253,8 @@ class _TargetPageState extends State<TargetPage> {
                   }
 
                   return Container(
-                    width: 250.0,
-                    height: 250.0,
+                    width: 350.0,
+                    height: 225.0,
                     padding: EdgeInsets.all(10.0),
                     margin: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
@@ -223,19 +285,27 @@ class _TargetPageState extends State<TargetPage> {
                             icon: Icon(Icons.delete, color: Colors.white),
                           ),
                           Text(
+                            target.targetText,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 24.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
                             "Target: ${formatRupiah.format(target.targetCost)}",
                             style: GoogleFonts.bebasNeue(
                               fontSize: 20.0,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 10.0),
                           Text(
                             "Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.montserrat(
                               fontWeight: FontWeight.w600,
-                              fontSize: 16.0,
+                              fontSize: 12.0,
                               color: Colors.white,
                             ),
                           ),
@@ -251,6 +321,16 @@ class _TargetPageState extends State<TargetPage> {
                                   Colors.green,
                                 ),
                               ),
+                            ),
+                          ),
+                          Text(
+                            // menampilkan gap dengan mode dinamis yaitu berapa tahun/bulan/hari
+                            "${dinamisGap()}",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.0,
+                              color: Colors.white,
                             ),
                           ),
                         ],
