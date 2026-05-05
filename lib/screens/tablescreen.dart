@@ -51,7 +51,7 @@ class _TablePageState extends State<TablePage> {
           // update nilai saldo di saldonotifier agar bisa digunakan di screen lain
           Saldonotifier.saldoNotifier.value = saldo;
 
-        // widget yang muncul ketika tidak ada note
+          // widget yang muncul ketika tidak ada note
           if (noteNotifier.isEmpty) {
             return Center(
               child: Text(
@@ -218,45 +218,57 @@ class _TablePageState extends State<TablePage> {
                           return DataRow(
                             cells: [
                               DataCell(
-                                Text(
-                                  "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w500,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
                               DataCell(
-                                Text(
-                                  NumberFormat.simpleCurrency(
-                                    locale: 'id',
-                                    decimalDigits: 0,
-                                  ).format(cost),
-                                  style: GoogleFonts.notoSansGeorgian(
-                                    color: Colors.white,
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w500,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    NumberFormat.simpleCurrency(
+                                      locale: 'id',
+                                      decimalDigits: 0,
+                                    ).format(cost),
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: Colors.white,
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
                               DataCell(
-                                Text(
-                                  detail,
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    detail,
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
                               DataCell(
-                                Text(
-                                  type,
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    type,
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
