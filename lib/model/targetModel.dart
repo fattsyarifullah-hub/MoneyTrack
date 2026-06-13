@@ -24,7 +24,7 @@ class TargetModel {
     };
   }
 
-  // Model untuk merubah bentuk JSON ke dalam bentuk data asli
+  // === MODEL UNTUK CONVERT DARI JSON KE TARGETMODEL ===
   factory TargetModel.fromJson(Map<String, dynamic> json) {
     return TargetModel(
       startDate: DateTime.parse(json['startDate']),
@@ -37,7 +37,7 @@ class TargetModel {
   // JSON encode memasukkan data asli ke dalam bentuk JSON yang rapi
   String toJsonString() => jsonEncode(toJson());
 
-  // ambil data asli dari formJson
+  // === MODEL UNTUK CONVERT DARI JSON STRING KE TARGETMODEL ===
   factory TargetModel.fromJsonString(String jsonString) {
     return TargetModel.fromJson(jsonDecode(jsonString));
   }

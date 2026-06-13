@@ -27,7 +27,7 @@ class _TargetPageState extends State<TargetPage> {
     Targetnotifier.loadTarget();
   }
 
-  // function untuk hitung jarak antara tanggal mulai dan tanggal selesai itu berapa hari
+  // === FUNCTION UNTUK MENGHITUNG GAP ANTARA START DATE DAN FINAL DATE ===
   void gapTimeFromDate() {
     if (startDate != null && finalDate != null) {
       // menghitung gap antara datetima startdate dan final date
@@ -40,7 +40,7 @@ class _TargetPageState extends State<TargetPage> {
     }
   }
 
-  // function untuk membuat perhitungan selisih tanggal menjadi dinamis
+  // === FUNCTION UNTUK MEMBUAT PERHITUNGAN GAP MENJADI DINAMIS BERDASARKAN SELISIH TANGGAL ===
   dinamisGap() {
     // jika selisih tanggal lebih dari 30 maka lakukan ini
     if (selisihTanggal > 30) {
@@ -59,7 +59,7 @@ class _TargetPageState extends State<TargetPage> {
     }
   }
 
-  // function untuk menampilkan popup target
+  // === FUNCTION UNTUK MEMUNCULKAN POPUP TARGET ===
   void showPopupTarget() {
     showDialog(
       context: context,
@@ -71,19 +71,21 @@ class _TargetPageState extends State<TargetPage> {
         ),
         content: Column(
           children: [
-            // input untuk text target cost
+            
+            // #WIDGET UNTUK MENGINPUT TARGET UANG#
             TextField(
               controller: costTargetController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: "target uang"),
             ),
 
+            // #WIDGET UNTUK MENGINPUT TARGET PLANNING#
             TextField(
               controller: textTargetController,
               decoration: InputDecoration(labelText: "Target Planning"),
             ),
 
-            // button untuk setting date awal
+            // #WIDGET BUTTON UNTUK SETTING DATE DIMULAI#
             ElevatedButton(
               onPressed: () async {
                 final pickStartDate = await showDatePicker(
@@ -112,7 +114,7 @@ class _TargetPageState extends State<TargetPage> {
             ),
             SizedBox(height: 10.0),
 
-            // button untuk setting date akhir
+            // #WIDGET BUTTON UNTUK SETTING DATE AKHIR
             ElevatedButton(
               onPressed: () async {
                 final pickFinalDate = await showDatePicker(
@@ -142,7 +144,8 @@ class _TargetPageState extends State<TargetPage> {
         ),
 
         actions: [
-          // button untuk cancel
+
+          // #WIDGET BUTTON UNTUK CANCEL
           TextButton(
             onPressed: () => Navigator.pop(context),
             style: TextButton.styleFrom(
@@ -159,7 +162,7 @@ class _TargetPageState extends State<TargetPage> {
             ),
           ),
 
-          // button untuk menyimpan data target, data akan masuk ke model target dan disimpan di notifier target
+          // #WIDGET BUTTON UNTUK SIMPAN DATA TARGET#
           ElevatedButton(
             onPressed: () {
               if (costTargetController.text.isEmpty ||
@@ -233,6 +236,8 @@ class _TargetPageState extends State<TargetPage> {
             valueListenable: Targetnotifier.targetNotifier,
             builder: (BuildContext context, target, child) {
               if (target == null) {
+
+                // #WIDGET YANG MUNCUL APABILA BELUM ADA TARGET#
                 return Center(
                   child: Text(
                     "Belum ada Target",
@@ -252,6 +257,7 @@ class _TargetPageState extends State<TargetPage> {
                     progress = 1;
                   }
 
+                  // #WIDGET CONTAINER UNTUK MENAMPILKAN DATA TARGET#
                   return Container(
                     width: 350.0,
                     height: 225.0,
@@ -272,7 +278,8 @@ class _TargetPageState extends State<TargetPage> {
                     child: Container(
                       child: Column(
                         children: [
-                          // icon untuk menghapus data target
+
+                          // #WIDGET UNTUK MENAMPILKAN ICON DELETE UNTUK MENGHAPUS TARGET#
                           IconButton(
                             onPressed: () {
                               // akan memanggil function delete target untuk menghapus data target
@@ -284,6 +291,8 @@ class _TargetPageState extends State<TargetPage> {
                             },
                             icon: Icon(Icons.delete, color: Colors.white),
                           ),
+
+                          // #WIDGET UNTUK MENAMPILKAN TARGET PLANNING
                           Text(
                             target.targetText,
                             textAlign: TextAlign.center,
@@ -293,6 +302,8 @@ class _TargetPageState extends State<TargetPage> {
                               color: Colors.white,
                             ),
                           ),
+
+                          // #WIDGET UNTUK MENAMPILKAN TARGET UANG 
                           Text(
                             "Target: ${formatRupiah.format(target.targetCost)}",
                             style: GoogleFonts.bebasNeue(
@@ -300,6 +311,8 @@ class _TargetPageState extends State<TargetPage> {
                               color: Colors.white,
                             ),
                           ),
+
+                          // #WIDGET UNTUK MENAMPILKAN SALDO YANG SUDAH TERKUMPUL#
                           Text(
                             "Uang yang sudah terkumpul: ${formatRupiah.format(saldo)}",
                             textAlign: TextAlign.center,
@@ -312,6 +325,8 @@ class _TargetPageState extends State<TargetPage> {
                           SizedBox(height: 25.0),
                           SizedBox(
                             height: 20.0,
+
+                            // #WIDGET UNTUK MENAMPILKAN PROGRESS BAR YANG BERGERAK SESUAI DENGAN PROGRESS TARGET#
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: LinearProgressIndicator(
@@ -323,6 +338,8 @@ class _TargetPageState extends State<TargetPage> {
                               ),
                             ),
                           ),
+
+                          // #WIDGET UNTUK MENAMPILKAN GAP ANTARA START DATE DAN FINAL DATE DENGAN MODE DINAMIS SESUAI SELISIH TANGGAL#
                           Text(
                             // menampilkan gap dengan mode dinamis yaitu berapa tahun/bulan/hari
                             "${dinamisGap()}",

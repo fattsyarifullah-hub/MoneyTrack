@@ -12,6 +12,8 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
+  // untuk container show less or show more
+  bool isExpanded = false;
   final cost = Notenotifier.noteNotifier;
 
   @override
@@ -48,10 +50,14 @@ class _TablePageState extends State<TablePage> {
             }
           }
 
+          // jika saldo sudah kurang maka tidak bisa mines
+          if (saldo < 0 || totalSpending > totalIncome) {
+            saldo = 0;
+          }
           // update nilai saldo di saldonotifier agar bisa digunakan di screen lain
           Saldonotifier.saldoNotifier.value = saldo;
 
-          // widget yang muncul ketika tidak ada note
+          // #WIDGET YANG MUNCUL APABILA TIDAK ADA NOTE#
           if (noteNotifier.isEmpty) {
             return Center(
               child: Text(
@@ -61,14 +67,14 @@ class _TablePageState extends State<TablePage> {
             );
           }
 
-          // widget yang muncul ketika ada note
+          // #WIDGET UTAMA KETIKA ADA NOTE#
           return Center(
             child: Column(
               children: [
+                // #WIDGET CONTAINER UNTUK MENAMPILKAN SALDO, INCOME, DAN SPENDING#
                 Container(
                   width: 450.0,
-                  height: 180.0,
-                  padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
+                  padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
                   decoration: BoxDecoration(
                     // membuat warna gradient pada container
                     gradient: LinearGradient(
@@ -82,101 +88,146 @@ class _TablePageState extends State<TablePage> {
                     ),
                     borderRadius: BorderRadius.circular(35.0),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              "Balance",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w600,
+                  // container yang ada animasi untuk show more or show less
+                  child: AnimatedSize(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // #WIDGET UNTUK MENAMPILKAN SALDO#
+                        Container(
+                          child: Column(
+                            children: [
+                              Text(
+                                "Balance",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            Container(
-                              width: 370.0,
-                              // agar text saldo tidak overflow ketika jumlahnya banyak, maka digunakan widget FittedBox dengan fit BoxFit.scaleDown
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  "${formatRupiah.format(saldo)}",
-                                  style: GoogleFonts.notoSansGeorgian(
-                                    color: Colors.white,
-                                    fontSize: 50.0,
-                                    fontWeight: FontWeight.w700,
+                              Container(
+                                width: 370.0,
+
+                                // agar text saldo tidak overflow ketika jumlahnya banyak, maka digunakan widget FittedBox dengan fit BoxFit.scaleDown
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    "${formatRupiah.format(saldo)}",
+                                    style: GoogleFonts.notoSansGeorgian(
+                                      color: Colors.white,
+                                      fontSize: 50.0,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Income",
-                                    style: GoogleFonts.notoSansGeorgian(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 75.0,
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        "${formatRupiah.format(totalIncome)}",
+
+                        // ini adalah widget yang muncul apabila tombol show more ditekan dan nilai isexpanded menjadi true
+                        if (isExpanded) ...[
+                          // #WIDGET UNTUK MENAMPILKAN INCOME DAN SPENDING#
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "Income",
                                         style: GoogleFonts.notoSansGeorgian(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                    ),
+                                      Container(
+                                        width: 75.0,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            "${formatRupiah.format(totalIncome)}",
+                                            style: GoogleFonts.notoSansGeorgian(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Spending",
-                                    style: GoogleFonts.notoSansGeorgian(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 75.0,
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        "${formatRupiah.format(totalSpending)}",
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "Spending",
                                         style: GoogleFonts.notoSansGeorgian(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                    ),
+                                      Container(
+                                        width: 75.0,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            "${formatRupiah.format(totalSpending)}",
+                                            style: GoogleFonts.notoSansGeorgian(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        // # WIDGET UNTUK MENAMPILKAN TOMBOL SHOW MORE ATAU SHOW LESS#
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                // ketika tombol ditekan maka nilai isexpanded akan berubah menjadi true atau false sehingga widget yang muncul juga berubah
+                                isExpanded = !isExpanded;
+                              });
+                            },
+
+                            // jika isexpanded true maka tombol akan menampilkan show less dan jika false akan menampilkan show more
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    isExpanded ? "Show Less" : "Show More",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Icon(
+                                    isExpanded
+                                        ? Icons.expand_less
+                                        : Icons.expand_more,
+                                    color: Colors.white,
                                   ),
                                 ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-                // table note
+
+                // #WIDGET TABLE UNTUK MENAMPILKAN DATA NOTE DALAM BENTUK TABEL#
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,

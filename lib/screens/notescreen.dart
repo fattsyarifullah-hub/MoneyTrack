@@ -27,7 +27,7 @@ class _NotePageState extends State<NotePage> {
     noteLogic.loadNote();
   }
 
-  // function untuk menampilkan datepicker
+  // === FUNCTION UNTUK MEMUNCULKAN DATE PICKER DAN MENGUBAH FORMAT TANGGAL YANG DIPILIH ===
   Future<void> datePick(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -43,12 +43,14 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
-  // function untuk menambah suatu data
+  // === FUNCTION UNTUK MENAMBAHKAN NOTE BARU ===
   Future<void> addMoreNote() async {
     if (selectedDate == null ||
         costController.text.isEmpty ||
         detailController.text.isEmpty ||
         selectedTypeNote.isEmpty)
+
+        // #WIDGET YANG MUNCUL APABILA USER TIDAK MENGISI SEMUA FIELD#
       return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -89,7 +91,7 @@ class _NotePageState extends State<NotePage> {
     detailController.clear();
   }
 
-  // function warna container berdasarkan tipe input
+  // === FUNCTION UNTUK MENGUBAH WARNA CONTAINER BERDASARKAN TIPE INPUT ===
   getColorContainer(String? type) {
     if (type == "income") {
       return Colors.green;
@@ -100,7 +102,7 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
-  // function warna text berdasarkan tipe input
+  // === FUNCTION UNTUK MENGUBAH WARNA TEXT BERDASARKAN TIPE INPUT ===
   getColorTextNote(String? type) {
     if (type == "income") {
       return Colors.green;
@@ -111,7 +113,7 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
-  // function untuk icon sesuai tipe input
+  // === FUNCTION UNTUK MENGUBAH ICON BERDASARKAN TIPE INPUT ===
   getIconNote(String? type) {
     if (type == "income") {
       return Icon(Icons.add, color: Colors.green);
@@ -122,8 +124,10 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
-  // function untuk menampilkan popup FAB
+  // === FUNCTION UNTUK MEMUNCULKAN POPUP UNTUK MENAMBAHKAN NOTE BARU DARI FAB ===
   void showPopupNote() {
+
+    // #WIDGET POPUP UNTUK MENAMBAHKAN NOTE BARU DARI FAB#
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -139,6 +143,8 @@ class _NotePageState extends State<NotePage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+
+            // #WIDGET UNTUK INPUT TANGGAL
             TextField(
               controller: dateController,
               readOnly: true,
@@ -160,6 +166,8 @@ class _NotePageState extends State<NotePage> {
                 ),
               ),
             ),
+
+            // #WIDGET UNTUK INPUT COST
             TextField(
               controller: costController,
               keyboardType: TextInputType.number,
@@ -179,6 +187,8 @@ class _NotePageState extends State<NotePage> {
                 ),
               ),
             ),
+
+            // #WIDGET UNTUK INPUT DETAIL
             TextField(
               controller: detailController,
               decoration: InputDecoration(
@@ -198,6 +208,8 @@ class _NotePageState extends State<NotePage> {
               ),
             ),
             SizedBox(height: 10.0),
+
+            // #WIDGET UNTUK MEMILIH TIPE INPUT
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -254,6 +266,7 @@ class _NotePageState extends State<NotePage> {
           ],
         ),
         actions: [
+
           // button batal menambah note
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -293,12 +306,15 @@ class _NotePageState extends State<NotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder(
+
         // mendengarkan perubahan data note yang disimpan di notenotifier
         valueListenable: Notenotifier.noteNotifier,
 
         // membangun tampilan berdasarkan data note yang ada
         builder: (context, allNotes, _) {
           if (allNotes.isEmpty) {
+
+            // #WIDGET YANG MUNCUL APABILA BELUM ADA NOTE YANG DISIMPAN#
             return Center(
               child: Text(
                 "Belum ada notes",
@@ -307,19 +323,24 @@ class _NotePageState extends State<NotePage> {
             );
           }
 
-          // widget yang muncul ketika ada note
+          // #WIDGET UNTUK MENAMPILKAN LIST NOTE YANG ADA#
           return ListView.builder(
+
             // menampilkan data sesuai dengan banyaknya note yang ada di notenotifier
             itemCount: allNotes.length,
             itemBuilder: (context, index) {
+
               // mengambil data note untuk ditampilkan berdasarkan index dalam array
               final displayNote = allNotes[index];
+
               // mengambil tipe input untuk menentukan warna dan icon
               final String? type = displayNote['opsi'];
+
               // mengubah format string ke dalam bentuk data asli untuk ditampilkan
               final DateTime date = DateTime.parse(displayNote['date']);
               return Column(
                 children: [
+                    // #WIDGET UNTUK MENAMPILKAN NOTE BERDASARKAN DATA YANG ADA DI NOTENOTIFIER#
                   Container(
                     width: 300,
                     height: 115,
@@ -342,6 +363,8 @@ class _NotePageState extends State<NotePage> {
                             padding: EdgeInsets.symmetric(vertical: 30.0),
                             child: Column(
                               children: <Widget>[
+
+                                // #WIDGET UNTUK MENAMPILKAN TANGGAL#
                                 Text(
                                   "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}",
                                   style: GoogleFonts.montserrat(
@@ -355,6 +378,8 @@ class _NotePageState extends State<NotePage> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
+
+                                // #WIDGET UNTUK MENAMPILKAN DETAIL NOTE#
                                 Text(
                                   displayNote['detail'],
                                   style: GoogleFonts.bebasNeue(
@@ -371,7 +396,11 @@ class _NotePageState extends State<NotePage> {
                             child: Container(
                               child: Row(
                                 children: [
+
+                                  // #WIDGET UNTUK MENAMPILKAN ICON SESUAI DENGAN TIPE INPUT
                                   getIconNote(type),
+
+                                  // #WIDGET UNTUK MENAMPILKAN COST DENGAN FORMAT RUPIAH DAN WARNA SESUAI DENGAN TIPE INPUT#
                                   Text(
                                     NumberFormat.simpleCurrency(
                                       locale: 'id',

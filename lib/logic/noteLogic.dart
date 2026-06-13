@@ -5,7 +5,7 @@ import '../notifier/notenotifier.dart';
 class noteLogic {
   static const String keyNotes = "notes";
 
-  // function untuk mengambil semua note yang ada
+// === FUNCTION UNTUK MEMUAT DATA DARI SHARED PREFERENCES ===
   static Future<void> loadNote() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonData = prefs.getString(keyNotes);
@@ -27,7 +27,7 @@ class noteLogic {
         .toList();
   }
 
-  // function untuk menambah data
+// === FUNCTION UNTUK MENAMBAHKAN NOTE BARU KE SHARED PREFERENCES ===
   static Future<void> addnote(Map<String, dynamic> note) async {
     final prefs = await SharedPreferences.getInstance();
 
