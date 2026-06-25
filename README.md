@@ -23,4 +23,4 @@ flutter run
 
 ## Download App
 install file here 
-- https://github.com/fattsyarifullah-hub/MoneyTrack.git/download/MoneyTrack.apk
+- https://github.com/fattsyarifullah-hub/MoneyTrack/MoneyTrack.zip
