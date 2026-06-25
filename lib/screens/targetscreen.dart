@@ -18,7 +18,10 @@ class _TargetPageState extends State<TargetPage> {
   final TextEditingController textTargetController = TextEditingController();
   DateTime? startDate;
   DateTime? finalDate;
+  // untuk function gap tanggal
   int selisihTanggal = 0;
+  // untuk function snakcbar
+  bool _shownSnackBar = false;
 
   @override
   void initState() {
@@ -59,6 +62,25 @@ class _TargetPageState extends State<TargetPage> {
     }
   }
 
+  // === FUNCTION UNTUK MEMUNCULKAN SNACKBAR APABILA TARGET SUDAH TERCAPAI ===
+  void _successSnackBar() {
+    if (!_shownSnackBar) {
+      _shownSnackBar = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "SELAMAT! Target kamu sudah tercapai",
+              style: TextStyle(color: Colors.white),
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+    }
+  }
+
   // === FUNCTION UNTUK MEMUNCULKAN POPUP TARGET ===
   void showPopupTarget() {
     showDialog(
@@ -71,7 +93,6 @@ class _TargetPageState extends State<TargetPage> {
         ),
         content: Column(
           children: [
-            
             // #WIDGET UNTUK MENGINPUT TARGET UANG#
             TextField(
               controller: costTargetController,
@@ -144,7 +165,6 @@ class _TargetPageState extends State<TargetPage> {
         ),
 
         actions: [
-
           // #WIDGET BUTTON UNTUK CANCEL
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -236,7 +256,6 @@ class _TargetPageState extends State<TargetPage> {
             valueListenable: Targetnotifier.targetNotifier,
             builder: (BuildContext context, target, child) {
               if (target == null) {
-
                 // #WIDGET YANG MUNCUL APABILA BELUM ADA TARGET#
                 return Center(
                   child: Text(
@@ -255,6 +274,9 @@ class _TargetPageState extends State<TargetPage> {
 
                   if (progress > 1) {
                     progress = 1;
+                    _successSnackBar();
+                  } else {
+                    _shownSnackBar = false;
                   }
 
                   // #WIDGET CONTAINER UNTUK MENAMPILKAN DATA TARGET#
@@ -278,7 +300,6 @@ class _TargetPageState extends State<TargetPage> {
                     child: Container(
                       child: Column(
                         children: [
-
                           // #WIDGET UNTUK MENAMPILKAN ICON DELETE UNTUK MENGHAPUS TARGET#
                           IconButton(
                             onPressed: () {
@@ -303,7 +324,7 @@ class _TargetPageState extends State<TargetPage> {
                             ),
                           ),
 
-                          // #WIDGET UNTUK MENAMPILKAN TARGET UANG 
+                          // #WIDGET UNTUK MENAMPILKAN TARGET UANG
                           Text(
                             "Target: ${formatRupiah.format(target.targetCost)}",
                             style: GoogleFonts.bebasNeue(

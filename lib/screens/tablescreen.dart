@@ -71,7 +71,7 @@ class _TablePageState extends State<TablePage> {
           return Center(
             child: Column(
               children: [
-                // #WIDGET CONTAINER UNTUK MENAMPILKAN SALDO, INCOME, DAN SPENDING#
+                // #WIDGET CONTAINER UNTUK MENAMPILKAN SALDO, INCOME, DAN SPENDING#=
                 Container(
                   width: 450.0,
                   padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
